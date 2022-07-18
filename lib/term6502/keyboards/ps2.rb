@@ -155,6 +155,10 @@ module Term6502
         end
       end
 
+      def needs_timing?
+        !queue.empty?
+      end
+
       def tick(ticks)
         ticks.times do
           byte = queue.pop(true)

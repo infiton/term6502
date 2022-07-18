@@ -3,31 +3,23 @@
 module Term6502
   module Videocard
     class BaseVideocard
-      attr_reader :frame_buffer
+      include Peripheral
 
       def initialize(frame_buffer:)
         @frame_buffer = frame_buffer
-      end
-
-      def type
-        self.class.name.split("::").last.downcase
       end
 
       def profile
         "term6502-#{type}"
       end
 
-      def asserting?
-        false
-      end
-
-      def tick(ticks); end
-
       def setup(curses); end
 
       def restore(curses); end
 
       private
+
+      attr_reader :frame_buffer
 
       def curses_color(byte)
         ((byte * 200) / 51).to_i

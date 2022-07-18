@@ -3,21 +3,11 @@
 module Term6502
   module Keyboard
     class BaseKeyboard
+      include Peripheral
+
       def initialize(port:)
         @port = port
-        @asserting = false
         @queue = Queue.new
-      end
-
-      def type
-        self.class.name.split("::").last.downcase
-      end
-
-      def asserting?
-        @asserting
-      end
-
-      def tick(ticks)
       end
 
       def press(curses_key)

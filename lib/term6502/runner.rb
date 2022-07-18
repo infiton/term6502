@@ -27,6 +27,9 @@ module Term6502
 
       @unknown_command = false
       @debug_buffer = ""
+
+      @delta_instructions = 0
+      @delta_time = 0.0
     end
 
     def run
@@ -47,7 +50,16 @@ module Term6502
 
       Ruby6502.reset
 
+      last_instruction_count = Ruby6502.instruction_count
+      last_time = Time.now
+
       loop do
+        @delta_instructions = Ruby6502.instruction_count - last_instruction_count
+        @delta_time = Time.now - last_time
+
+        last_instruction_count = Ruby6502.instruction_count
+        last_time = Time.now
+
         @window.setpos(0, 0)
         videocard.draw(Curses, @window)
 
@@ -79,6 +91,14 @@ module Term6502
       [keyboard, videocard]
     end
 
+    def interrupt_asserted?
+      peripherals.map(&:asserting?).any?
+    end
+
+    def peripheral_needs_timing?
+      peripherals.map(&:needs_timing?).any?
+    end
+
     def step_6502
       start_ticks = Ruby6502.tick_count
       Ruby6502.interrupt_request if interrupt_asserted?
@@ -100,8 +120,12 @@ module Term6502
         keyboard.press(key)
       end
 
-      ticks = tick_rate
-      ticks -= step_6502 while ticks > 0
+      if peripheral_needs_timing?
+        ticks = tick_rate
+        ticks -= step_6502 while ticks > 0
+      else
+        Ruby6502.exec(tick_rate)
+      end
     end
 
     def debug_step(key)
@@ -117,10 +141,6 @@ module Term6502
       else
         @debug_buffer += key.to_s
       end
-    end
-
-    def interrupt_asserted?
-      peripherals.map(&:asserting?).any?
     end
 
     def show_memory_map?
@@ -181,8 +201,11 @@ module Term6502
       "IC: #{Ruby6502.instruction_count}"
     end
 
-    def interrupt_asserted_flag
-      interrupt_asserted? ? "INT" : ""
+    def interrupt_asserted_and_timing
+      int = (interrupt_asserted? ? "INT" : "   ")
+      freq = @delta_time > 0 ? @delta_instructions/@delta_time : nil
+
+      "#{int}   #{format("%.2f", freq/1000000.0)} MHz"
     end
 
     def info_body
@@ -192,7 +215,7 @@ module Term6502
         status_header,
         status_flags,
         instruction_count,
-        interrupt_asserted_flag,
+        interrupt_asserted_and_timing,
       ] + ([""] * 11)
     end
 
