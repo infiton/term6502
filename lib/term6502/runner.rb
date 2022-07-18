@@ -14,12 +14,13 @@ module Term6502
 
     UNKNOWN_COMMAND_MSG = "UNKNOWN COMMAND"
 
-    def initialize(program:, program_location:, keyboard:, videocard:, tick_rate:, debug:)
+    def initialize(program:, program_location:, keyboard:, videocard:, random_byte_port:, tick_rate:, debug:)
       @program = program
       @program_location = program_location
       @keyboard = keyboard
       @videocard = videocard
       @tick_rate = tick_rate
+      @random_byte_port = random_byte_port
       @debug = debug
 
       @memory_map_start = nil
@@ -41,12 +42,7 @@ module Term6502
         location: program_location,
       )
 
-      Ruby6502.register_instruction_hook do
-        Ruby6502.load(
-          [Random.rand(256)],
-          location: 0xfe,
-        )
-      end
+      Ruby6502.configure_rng(random_byte_port) if random_byte_port
 
       Ruby6502.reset
 
@@ -85,7 +81,7 @@ module Term6502
 
     private
 
-    attr_reader :program, :program_location, :keyboard, :videocard, :tick_rate, :window
+    attr_reader :program, :program_location, :keyboard, :videocard, :random_byte_port, :tick_rate, :window
 
     def peripherals
       [keyboard, videocard]

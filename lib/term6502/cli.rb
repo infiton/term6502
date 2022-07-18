@@ -17,6 +17,7 @@ module Term6502
       frame_buffer: 0x2000,
       keyboard_port: 0x6001,
       tick_rate: 10000,
+      random_byte_port: 0x6000,
     }
 
     def parse(args = ARGV)
@@ -35,6 +36,7 @@ module Term6502
         program_location: options[:program_location],
         keyboard: keyboard,
         videocard: videocard,
+        random_byte_port: options[:random_byte_port],
         tick_rate: options[:tick_rate],
         debug: debug?
       )
@@ -115,6 +117,14 @@ module Term6502
 
         parser.on("--tick_rate TICKRATE", "Number of 6502 ticks per screen draw.") do |tick_rate|
           options[:tick_rate] = tick_rate.to_i
+        end
+
+        parser.on("--random_byte_port RANDOM_BYTE", "Memory location at which random byte will be available.") do |random_byte_port|
+          options[:random_byte_port] = random_byte_port.to_i(16)
+        end
+
+        parser.on("--no_random_byte", "Do not generate random byte.") do
+          options[:random_byte_port] = nil
         end
 
         parser.on("-h", "--help", "Prints this help") do
