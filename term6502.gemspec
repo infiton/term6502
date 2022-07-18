@@ -12,7 +12,7 @@ Term6502::GEMSPEC = Gem::Specification.new do |s|
   s.files       = Dir.glob("{lib}/**/*") + Dir.glob("{bin}/**/*")
 
   s.required_ruby_version = ">= 2.4"
-  # s.add_runtime_dependency("ruby6502", [">= 0.1"])
+  s.add_runtime_dependency("ruby6502", [">= 0.1"])
   s.executables = ["term6502"]
   s.homepage    = "http://github.com/infiton/term6502"
   s.license     = "MIT"
