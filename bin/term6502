@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/term6502/cli"
+
+begin
+  cli = Term6502::CLI.instance
+  cli.parse
+  cli.run
+end
