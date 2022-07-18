@@ -1,0 +1,11 @@
+{
+  "Profiles": [
+    {
+      "Name": "term6502-bitmap128x64",
+      "Guid": "EFFFD6A4-3493-4325-AC6D-CF87B9FFE75C",
+      "Normal Font": "ModernDOS4378x8 7",
+      "Horizontal Spacing": 1.25,
+      "Disable Window Resizing" : false
+    }
+  ]
+}
