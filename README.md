@@ -7,6 +7,7 @@ Go to `support/fonts` and add the `ModernDOS4378x8.ttf` font to your fontbook (i
 ```sh
 ln -s $(pwd)/support/iterm/term6502-profiles.json ~/Library/Application\ Support/iTerm2/DynamicProfiles/
 
+bundle install
 gem build term6502.gemspec
 gem install term6502-0.1.0.gem
 
